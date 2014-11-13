@@ -12,30 +12,30 @@ public class Crystal {
     //private int particleNum
 
     Crystal(int cellsNum) {
-        //this.particleNum = particleNum
         this.distribution = new ArrayList<Integer>();
-        for(int index = 0; index < cellsNum; index++ ){
+        for(int cellIndex = 0; cellIndex < cellsNum; cellIndex++ ){
             this.distribution.add(0);
         }
     }
 
     public void addParticle() {
         this.distribution.set(0, this.distribution.get(0) + 1);
+        //this.particleNum++;
     }
 
-    //Двигаем частицу из ячейки index в конец кристалла
+    //Move particle from index to index+1 (if exists)
     public synchronized int moveRight(int index) {
-        this.distribution.set(index, this.distribution.get(index) - 1);
-        int endIndex = (index + 1) < this.distribution.size() ? index + 1 : index;
-        this.distribution.set(endIndex, this.distribution.get(endIndex) + 1);
+        this.distribution.set(index, this.distribution.get(index) - 1);             //decrease Crystal[index]
+        int endIndex = (index + 1) < this.distribution.size() ? index + 1 : index;  //calculate endIndex
+        this.distribution.set(endIndex, this.distribution.get(endIndex) + 1);       //increase Crystal[endIndex]
         return endIndex;
     }
 
-    //Двигаем частицу из ячейки index в начало кристалла
+    //Move particle from index to index-1 (if exists)
     public synchronized int moveLeft(int index) {
-        this.distribution.set(index, this.distribution.get(index) - 1);
-        int endIndex = (index - 1) >= 0 ? index - 1 : index;
-        this.distribution.set(endIndex, this.distribution.get(endIndex) + 1);
+        this.distribution.set(index, this.distribution.get(index) - 1);             //decrease Crystal[index]
+        int endIndex = (index - 1) >= 0 ? index - 1 : index;                        //calculate endIndex
+        this.distribution.set(endIndex, this.distribution.get(endIndex) + 1);       //increase Crystal[endIndex]
         return endIndex;
     }
 

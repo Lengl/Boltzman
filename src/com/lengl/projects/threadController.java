@@ -7,9 +7,9 @@ package com.lengl.projects;
 public class threadController {
 
     private final Object childSync = new Object();
-    private int count = 0;  //Счётчик несходивших частиц
-    private int lifetime = 0; //"Секундомер"
-    private boolean finisher = false; //Убийца дочерних процессов
+    private int count = 0;                  //count for unmoved paricles
+    private int lifetime = 0;               //global clock
+    private boolean finisher = false;       //threadKiller
 
     public void childAwaitForJob(int lifetime) throws InterruptedException {
         synchronized (childSync) {
@@ -25,6 +25,7 @@ public class threadController {
     public void countDown() {
         synchronized (childSync) {
             if (--count <= 0) {
+                //wake parent
                 count = 0;
                 childSync.notifyAll();
             }
@@ -35,6 +36,7 @@ public class threadController {
         synchronized (childSync) {
             this.lifetime++;
             this.count = newParticlesNum;
+            //wake childThreads
             childSync.notifyAll();
             while (count > 0) {
                 childSync.wait();
@@ -47,6 +49,7 @@ public class threadController {
             this.lifetime++;
             this.count = newParticlesNum;
             finisher = true;
+            //wake childThreads for exit
             childSync.notifyAll();
         }
     }

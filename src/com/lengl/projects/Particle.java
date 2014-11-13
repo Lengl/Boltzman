@@ -7,10 +7,10 @@ import java.util.Random;
  */
 public class Particle extends Thread {
     private threadController semaphore;
-    private int position = 0; //позиция частицы в кристалле
-    private int lifetime = 1; //секундомер частицы
-    private double probabilityRight; //вероятность для частицы сходить к концу массива
-    private Crystal home;   //родной кристалл
+    private int position = 0;                   //position in Crystal
+    private int lifetime = 1;                   //particle's clock
+    private double probabilityRight;            //probability to go to the array's end
+    private Crystal home;                       //base Crystal for this particle
 
     Particle(threadController semaphore, Crystal crystal, double probabilityRight) {
         this.home = crystal;
@@ -21,7 +21,7 @@ public class Particle extends Thread {
     @Override
     public void run() {
         while(true) {
-            //ждём совпадения секундомеров
+            //waiting for the watch to match
             try {
                 semaphore.childAwaitForJob(lifetime);
             } catch(InterruptedException ex) {
@@ -29,7 +29,7 @@ public class Particle extends Thread {
                 //do nothing?
             }
             try {
-                //Определяем, куда двигаться
+                //decide where to move
                 Random generator = new Random();
                 double result = generator.nextDouble();
                 if (Double.compare(result, probabilityRight) < 0) {
@@ -37,7 +37,7 @@ public class Particle extends Thread {
                 } else {
                     position = home.moveLeft(position);
                 }
-                //спим
+                //sleep
                 try {
                     Thread.sleep(1000);                 //1000 milliseconds is one second.
                 } catch (InterruptedException ex) {
@@ -45,7 +45,7 @@ public class Particle extends Thread {
                     //do nothing?
                 }
             } finally {
-                //сообщаем, что работа завершена и переводим часы.
+                //tell to the parent we finished
                 this.lifetime++;
                 semaphore.countDown();
             }
